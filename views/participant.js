@@ -67,6 +67,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     myRegistrationsList.innerHTML = "<p>You have not registered for any events yet.</p>";
                 } else {
                     renderEvents(registrations, myRegistrationsList, "View Details");
+                    if (typeof loadSubmitWorkDropdown === 'function') {
+                        loadSubmitWorkDropdown(registrations);
+                    }
                 }
             } else {
                 myRegistrationsList.innerHTML = "<p>Failed to load registrations.</p>";
@@ -161,6 +164,65 @@ document.addEventListener("DOMContentLoaded", () => {
             } catch (error) {
                 console.error("Error registering team:", error);
                 alert("Failed to connect to the server.");
+            }
+        });
+    }
+
+    const submitTeamSelect = document.getElementById("submitTeamSelect");
+    const submitWorkForm = document.getElementById("submitWorkForm");
+    const submitMessage = document.getElementById("submitMessage");
+
+    async function loadSubmitWorkDropdown(registrations) {
+        if (submitTeamSelect) {
+            submitTeamSelect.innerHTML = '<option value="" disabled selected>Select a Team (Event)</option>';
+            registrations.forEach(reg => {
+                const option = document.createElement("option");
+                option.value = reg.team_id;
+                // Store event_id in dataset for easy retrieval
+                option.dataset.eventId = reg.event_id;
+                option.textContent = `${reg.team_name} - ${reg.title || reg.name}`;
+                submitTeamSelect.appendChild(option);
+            });
+        }
+    }
+
+    if (submitWorkForm) {
+        submitWorkForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            const selectedOption = submitTeamSelect.options[submitTeamSelect.selectedIndex];
+            const teamId = selectedOption.value;
+            const eventId = selectedOption.dataset.eventId;
+            const githubLink = document.getElementById("githubLink").value;
+
+            try {
+                const response = await fetch("http://localhost:3000/api/submissions/create", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        team_id: teamId,
+                        event_id: eventId,
+                        repository_url: githubLink
+                    })
+                });
+                
+                const result = await response.json();
+                if (response.ok) {
+                    submitMessage.style.display = "block";
+                    submitMessage.style.color = "green";
+                    submitMessage.textContent = result.message || "Project submitted successfully!";
+                    submitWorkForm.reset();
+                    setTimeout(() => submitMessage.style.display = "none", 3000);
+                } else {
+                    submitMessage.style.display = "block";
+                    submitMessage.style.color = "red";
+                    submitMessage.textContent = "Error: " + result.message;
+                }
+            } catch (error) {
+                console.error("Error submitting work:", error);
+                submitMessage.style.display = "block";
+                submitMessage.style.color = "red";
+                submitMessage.textContent = "Failed to connect to the server.";
             }
         });
     }

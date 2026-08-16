@@ -239,7 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             // POST/PUT request to your Evaluations endpoint
-            const response = await fetch("http://localhost:3000/api/evaluations", {
+            const response = await fetch("http://localhost:3000/api/evaluations/grade", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ 

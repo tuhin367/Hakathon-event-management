@@ -111,3 +111,33 @@ exports.getAvailableEvents = async (req, res) => {
         res.status(500).json({ message: 'Failed to fetch events.' });
     }
 };
+
+// Admin: Get events assigned to a specific admin
+exports.getAdminEvents = async (req, res) => {
+    try {
+        const { admin_id } = req.params;
+        const query = `
+            SELECT e.* 
+            FROM Events e
+            JOIN Event_Admins ea ON e.event_id = ea.event_id
+            WHERE ea.admin_id = ?
+        `;
+        const [events] = await db.execute(query, [admin_id]);
+        res.status(200).json(events);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to fetch admin events.' });
+    }
+};
+
+// Admin: Get all events in the system
+exports.getAllEvents = async (req, res) => {
+    try {
+        const query = "SELECT * FROM Events ORDER BY start_date DESC";
+        const [events] = await db.execute(query);
+        res.status(200).json(events);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to fetch all events.' });
+    }
+};

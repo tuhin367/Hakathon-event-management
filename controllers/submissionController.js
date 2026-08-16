@@ -4,14 +4,14 @@ const db = require('../config/db');
 // Participant (Team Leader): Submit project code
 exports.submitWork = async (req, res) => {
     try {
-        const { team_id, repository_url } = req.body;
+        const { team_id, event_id, repository_url } = req.body;
 
         const query = `
-            INSERT INTO Submissions (team_id, url) 
-            VALUES (?, ?)
+            INSERT INTO Submissions (team_id, event_id, url) 
+            VALUES (?, ?, ?)
         `;
         
-        const [result] = await db.execute(query, [team_id, repository_url]);
+        const [result] = await db.execute(query, [team_id, event_id, repository_url]);
         
         res.status(201).json({ 
             message: 'Project submitted successfully!',

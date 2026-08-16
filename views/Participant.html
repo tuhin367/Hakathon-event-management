@@ -76,6 +76,34 @@
 
     </main>
 
+    <hr class="section-divider">
+
+    <!-- Section: Submit Work -->
+    <section class="dashboard-section form-section" style="margin: 0 auto 40px auto; max-width: 1200px; padding: 20px;">
+        <div class="section-header">
+            <h3>Submit Work</h3>
+            <p style="color: #666; font-size: 14px;">Paste your GitHub repository link to submit your project for grading.</p>
+        </div>
+        
+        <form id="submitWorkForm" class="admin-form">
+            <div class="form-row" style="grid-template-columns: 1fr 1fr;">
+                <div class="form-group">
+                    <label for="submitTeamSelect">Select Team / Event</label>
+                    <select id="submitTeamSelect" required>
+                        <option value="" disabled selected>Loading your registered teams...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="githubLink">GitHub Repository Link</label>
+                    <input type="url" id="githubLink" required placeholder="https://github.com/your-username/repo">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-action" style="background-color: #28a745;">Submit Project</button>
+            <div id="submitMessage" style="display: none; margin-top: 10px; font-weight: bold;"></div>
+        </form>
+    </section>
+
     <script src="participant.js"></script>
 </body>
 </html>
